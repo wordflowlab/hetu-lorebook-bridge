@@ -61,6 +61,7 @@ function metadata(c: any): { key: string; text: string } | undefined {
   const zero = c.data.indexOf(0);
   need(zero > 0 && zero <= 79, "PNG文本关键字无效。");
   const key = c.data.toString("latin1", 0, zero);
+  if (!["chara", "ccv3"].includes(key)) return;
   let b = c.data.subarray(zero + 1);
   if (c.type === "zTXt") {
     need(b[0] === 0, "PNG压缩方式不支持。");
@@ -80,7 +81,11 @@ function metadata(c: any): { key: string; text: string } | undefined {
     }
     if (compressed) b = inflateSync(b, { maxOutputLength: 240000 });
   }
-  return { key, text: b.toString("utf8") };
+  try {
+    return { key, text: new TextDecoder("utf-8", { fatal: true }).decode(b) };
+  } catch {
+    need(false, "PNG角色卡文本不是完整UTF-8，不能静默替换原字符。");
+  }
 }
 export function safeZip(bytes: Buffer) {
   let total = 0;
@@ -154,6 +159,11 @@ export function card(raw: string) {
         Array.isArray(keys) && keys.every((x) => typeof x === "string"),
         "世界书关键词无效。",
       );
+      for (const flag of ["enabled", "disable", "constant"])
+        need(
+          e[flag] === undefined || typeof e[flag] === "boolean",
+          "世界书启用与常驻标记必须为布尔值。",
+        );
       return {
         id: String(e.id ?? e.uid ?? key),
         title: e.name ?? e.comment ?? keys.join("、") ?? key,
@@ -387,14 +397,14 @@ export async function readProfessional(
     if (e.format === "json") out = Buffer.from(e.raw_json);
     else if (e.format === "png") {
       const texts = pngChunks(original).map(metadata).filter(Boolean);
-      const key = texts.some((m:any)=>m.key==='ccv3') ? 'ccv3' : 'chara';
+      const key = texts.some((m: any) => m.key === "ccv3") ? "ccv3" : "chara";
       const chunks = pngChunks(original).filter(
         (c) => metadata(c)?.key !== key,
       );
       const newChunk = pngChunk(
-          "tEXt",
-          Buffer.from(key + "\0" + Buffer.from(e.raw_json).toString("base64")),
-        );
+        "tEXt",
+        Buffer.from(key + "\0" + Buffer.from(e.raw_json).toString("base64")),
+      );
       out = Buffer.concat([
         pngSignature,
         ...chunks.flatMap((c) =>
@@ -409,17 +419,22 @@ export async function readProfessional(
         mtime: new Date("2000-01-01T00:00:00Z"),
       });
     }
-    const losses:any[]=[];
-    function removed(before:any,after:any,path=''){
-      if(!before||typeof before!=='object')return;
-      for(const key of Object.keys(before)){
-        const at=path+'/'+key.replaceAll('~','~0').replaceAll('/','~1');
-        if(!after||typeof after!=='object'||!Object.hasOwn(after,key))losses.push({kind:'field_removed',path:at,message:'当前结构已移除此原始字段；请核对是否为有意修改。'});
-        else removed(before[key],after[key],at);
+    const losses: any[] = [];
+    function removed(before: any, after: any, path = "") {
+      if (!before || typeof before !== "object") return;
+      for (const key of Object.keys(before)) {
+        const at = path + "/" + key.replaceAll("~", "~0").replaceAll("/", "~1");
+        if (!after || typeof after !== "object" || !Object.hasOwn(after, key))
+          losses.push({
+            kind: "field_removed",
+            path: at,
+            message: "当前结构已移除此原始字段；请核对是否为有意修改。",
+          });
+        else removed(before[key], after[key], at);
       }
     }
-    removed(JSON.parse(parsed.exchange.raw_json),JSON.parse(e.raw_json));
-    const raw_json_changed=e.raw_json!==parsed.exchange.raw_json;
+    removed(JSON.parse(parsed.exchange.raw_json), JSON.parse(e.raw_json));
+    const raw_json_changed = e.raw_json !== parsed.exchange.raw_json;
     return {
       ...artifact(
         out,
@@ -434,7 +449,11 @@ export async function readProfessional(
       losses,
       original_sha256: e.file_sha256,
       raw_json_changed,
-      preserved_unknown_fields: losses.length ? false : raw_json_changed ? null : true,
+      preserved_unknown_fields: losses.length
+        ? false
+        : raw_json_changed
+          ? null
+          : true,
     };
   }
 }

@@ -35,6 +35,15 @@ test("V2、V3与世界书保留未知扩展和禁用条目", () => {
     ).entries[0].enabled,
     false,
   );
+  assert.throws(
+    () =>
+      card(
+        JSON.stringify({
+          entries: [{ keys: [], content: "来信", enabled: "false" }],
+        }),
+      ),
+    /布尔值/,
+  );
 });
 test("错误摘要、畸形Base64和无姓名角色卡拒绝", () => {
   assert.throws(() => parseFile({ ...cardFile, sha256: "a".repeat(64) }));
@@ -94,6 +103,57 @@ test("PNG嵌入卡片CRC核验与往返像素块保持", async () => {
   bad[20] ^= 1;
   assert.throws(() =>
     parseFile({ ...file, base64: bad.toString("base64"), sha256: sha(bad) }),
+  );
+});
+test("PNG角色卡拒绝非法UTF-8，其他Latin1文本块原字节保留", async () => {
+  const image = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+    "base64",
+  );
+  const latin = pngChunk("tEXt", Buffer.from("Copyright\0café", "latin1"));
+  const packed = (text: Buffer) =>
+    Buffer.concat([
+      image.subarray(0, 8),
+      ...requireModule
+        .pngChunks(image)
+        .flatMap((c: any) =>
+          c.type === "IEND"
+            ? [
+                latin,
+                pngChunk("tEXt", Buffer.concat([Buffer.from("ccv3\0"), text])),
+                c.bytes,
+              ]
+            : [c.bytes],
+        ),
+    ]);
+  const file = (b: Buffer) => ({
+    filename: "角色.png",
+    base64: b.toString("base64"),
+    sha256: sha(b),
+  });
+  const invalid = packed(
+    Buffer.concat([
+      Buffer.from('{"name":"'),
+      Buffer.from([0xff]),
+      Buffer.from('"}'),
+    ]),
+  );
+  assert.throws(() => parseFile(file(invalid)), /UTF-8/);
+  const valid = file(packed(Buffer.from(cardJSON))),
+    parsed = parseFile(valid);
+  const out: any = await readProfessional(
+    "export_exchange",
+    { ...scenario(), exchanges: [parsed.exchange] },
+    [],
+    {
+      exchange_id: parsed.exchange.id,
+      original_file: valid,
+    },
+  );
+  assert.ok(
+    requireModule
+      .pngChunks(Buffer.from(out.base64, "base64"))
+      .some((c: any) => c.bytes.equals(latin)),
   );
 });
 test("CHARX保留附件并拒绝穿越和过大解压", async () => {
