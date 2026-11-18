@@ -2,8 +2,8 @@
   "date": "2026-11-18",
   "plugin_id": "org.wordflowlab.lorebook-bridge",
   "version": "0.1.0",
-  "package_sha256": "d01a7ad8384cb9e56ba9c38b4f49d17cdba76c1aecc296b6a47effc6e4a067f0",
-  "host_version": "hetu 0.11.7",
+  "package_sha256": "0620fb1c75dbedd1e76306e1be3445ab383f801cfe0eac5341623a9e05054402",
+  "host_version": "hetu 0.11.11",
   "platform": "darwin",
   "architecture": "arm64",
   "actions": [
