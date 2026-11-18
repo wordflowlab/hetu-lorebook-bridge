@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-18",
+  "plugin_id": "org.wordflowlab.lorebook-bridge",
+  "version": "0.1.0",
+  "package_sha256": "d01a7ad8384cb9e56ba9c38b4f49d17cdba76c1aecc296b6a47effc6e4a067f0",
+  "host_version": "hetu 0.11.7",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "actions": [
+    "save_project",
+    "put_exchange",
+    "list_projects",
+    "get_source",
+    "get_operation",
+    "get_basis",
+    "parse_file",
+    "inspect_exchange",
+    "preview_mapping",
+    "put_mapping",
+    "export_exchange",
+    "parse_asset",
+    "export_asset_exchange",
+    "get_project",
+    "build_context",
+    "create_handoff",
+    "compare_versions",
+    "export_project",
+    "remove_mapping",
+    "remove_exchange"
+  ],
+  "expected_rejections": [],
+  "skill_resources": 3,
+  "lifecycle": [
+    "install",
+    "disable",
+    "enable",
+    "uninstall",
+    "install"
+  ],
+  "fixed_history": true,
+  "CAS": true,
+  "original_key_recovery": true,
+  "artifact_sha256_verified": true,
+  "limits": [
+    "跨平台、真实创作质量、正文采纳、定稿和付费模型未在本用例验收"
+  ]
+}

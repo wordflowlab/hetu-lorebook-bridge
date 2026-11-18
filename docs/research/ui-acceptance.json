@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-18",
+  "plugin_id": "org.wordflowlab.lorebook-bridge",
+  "package_sha256": "85bbd9572a70929f58c9b76268b74ca8915a179098e4b2c2f53394d5da434212",
+  "host_version": "hetu 0.11.7",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "tabs": [
+    "交换记录",
+    "角色与条目",
+    "映射与损失",
+    "接续创作"
+  ],
+  "empty_state": true,
+  "professional_actions": true,
+  "artifact_files": [],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "widths": [
+    1360,
+    760
+  ],
+  "reduced_transparency": true,
+  "CAS_preserves_input": true,
+  "explicit_rebase": true,
+  "close_reopen": true,
+  "dirty_buffer_restore": true,
+  "page_errors": [],
+  "limits": [
+    "原生窗口材质、系统输入法及Windows/Linux未由本测试证明"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-18",
+  "references": [
+    {
+      "repository": "609476965/dsh-LorebookMD",
+      "commit": "4bc4110efbfb4888286b81aaf53191705dade9dd",
+      "license": null,
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "a903fb0da0321538ddc7cf38e280dc6df0968c1ef90eccfcc483a398237b2c72"
+        },
+        {
+          "path": "src/index.ts",
+          "sha256": "dcd58dba29917e0ac8bde2221d589474f5af36efc8473f3b318d4fa09b67f9f9"
+        },
+        {
+          "path": "src/tavern.ts",
+          "sha256": "f1a8038d85770256e314d49ccb54c80fd97694fdcb1e631bd60d065b3864fa24"
+        }
+      ],
+      "source_only": true
+    },
+    {
+      "repository": "xia-sc/dsh-cc-studio",
+      "commit": "5645cbd457612bfe248d15d4b386a2ee16a7ae35",
+      "license": "MIT",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "55e9f488ad4e6c2ed17bfd485f79780aa23f717564800ff678ea8cc7e41eb952"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "325e139e9e8e1f9d1f79bedaaac1e0b3eb3a0ec46bf1e3d811362862df09500a"
+        },
+        {
+          "path": "package.json",
+          "sha256": "bcf4111d82a17d93d0e1e115f1cc151c0af753ec5f65fd8a7441812540d03c8a"
+        },
+        {
+          "path": "lib/compat/core.js",
+          "sha256": "9381ff65b6f5abbc83cf1f43be06ebbbbc6938fb18eece56f36a9478e0dd3b2a"
+        },
+        {
+          "path": "lib/index.js",
+          "sha256": "8c906572dab8f9792d645dd035707db6c9f72031c6fa8174cab4d247370aeda8"
+        }
+      ],
+      "source_only": true
+    }
+  ],
+  "scope": "已逐个克隆的固定research base；方法与格式参考；不执行上游安装、测试或模型。"
+}
